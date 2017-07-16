@@ -1,0 +1,166 @@
+{% extends 'usercenter_base.html' %}
+{% block custom_title %}我的图书—爬虫在线{% endblock %}
+{% block custom_bread %}
+       <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
+                <li>我的收藏</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+{% block right_content %}
+    {% load staticfiles %}
+    <div class="right" >
+            <div class="personal_des Releasecont">
+                <div class="head">
+                    <h1>我的收藏</h1>
+                </div>
+
+            </div>
+            <div class="personal_des permessage">
+                <div class="head">
+                    <ul class="tab_header messagehead">
+                        <li class="active"><a href="{% url 'users:myfav_book' %}">我的图书</a> </li>
+                        <li><a href="{% url 'users:myfav_movie' %}">我的电影</a></li>
+                    </ul>
+                </div>
+                <div class="messagelist">
+                    {% for book in books.object_list%}
+                    <div class="messages butler_list company company-fav-box">
+                        <dl class="des fr">
+                            <dt>
+                                <a href="{% url 'book:book_detail' book.book_no %}">
+                                    <img width="130" height="140" src="{{ MEDIA_URL }}{{ book.image }}"/>
+                                </a>
+                            </dt>
+                            <dd>
+                                <h1><a href="{% url 'book:book_detail' book.book_no %}">{{ book.book_name }}</a></h1>
+                                <div class="pic fl" style="width:auto;">
+                                    <img src="{% static 'images/gold.png' %}"/>
+
+                                </div>
+                                <span class="c8 clear">评分{{ book.stars }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图书类型：{{book.book_kind }}</span>
+
+
+
+                                <div class="delete jsDeleteFav_book" data-favno="{{ book.book_no }}"></div>
+                            </dd>
+                        </dl>
+                    </div>
+                    {%  endfor %}
+
+
+                </div>
+                <div class="pageturn ">
+              <ul class="pagelist">
+                    {% if books.has_previous %}
+                        <li class="long"><a href="?page={{ books.previous_page_number}}">上一页</a></li>
+                    {% endif %}
+                    {% for page in books.paginator.page_range %}
+                            {%  if page %}
+                               {% ifequal page messages.number  %}
+                                       <li class="active"><a href="?page={{ page }}" class="page" >{{ page }}</a></li>
+                                {%  else %}
+                                      <li> <a href="?page={{ page }}" class="page" >{{ page }}</a></li>
+                               {%  endifequal %}
+                           {% else %}
+                                <li class="none"><a href="">...</a></li>
+                            {% endif %}
+                    {%  endfor %}
+                    {% if books.has_next %}
+                         <li class="long"><a href="?page={{ books.next_page_number }}">下一页</a></li>
+                    {% endif %}
+            </ul>
+        </div>
+            </div>
+        </div>
+{%  endblock %}
+
+{% block custom_js %}
+<script type="text/javascript">
+    $('.jsDeleteFav_book').on('click', function(){
+            var _this = $(this),
+                favno = _this.attr('data-favno');
+            $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'book:add_fav' %}",
+                    data: {
+                        fav_type:'sj',
+                        fav_no: favno,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function(data) {
+                        Dml.fun.winReload();
+                    }
+                });
+        });
+</script>
+{% endblock %}
+
+<script>
+        var shareUrl = '',
+            shareText = '',
+            shareDesc = '',
+            shareComment = '';
+        $(function () {
+            $(".bdsharebuttonbox a").mouseover(function () {
+                var type = $(this).attr('data-cmd'),
+                    $parent = $(this).parent('.bdsharebuttonbox'),
+                    fxurl = $parent.attr('data-url'),
+                    fxtext = $parent.attr('data-text'),
+                    fxdesc = $parent.attr('data-desc'),
+                    fxcomment = $parent.attr('data-comment');
+                switch (type){
+                    case 'tsina':
+                    case 'tqq':
+                    case 'renren':
+                            shareUrl = fxurl;
+                            shareText = fxdesc;
+                            shareDesc = '';
+                            shareComment = '';
+                        break;
+                    default :
+                            shareUrl = fxurl;
+                            shareText = fxtext;
+                            shareDesc = fxdesc;
+                            shareComment = fxcomment;
+                        break;
+                }
+            });
+        });
+        function SetShareUrl(cmd, config) {
+            if (shareUrl) {
+                config.bdUrl = "" + shareUrl;
+            }
+            if(shareText){
+                config.bdText = shareText;
+            }
+            if(shareDesc){
+                config.bdDesc = shareDesc;
+            }
+            if(shareComment){
+                config.bdComment = shareComment;
+            }
+
+            return config;
+        }
+        window._bd_share_config = {
+            "common": {
+                "onBeforeClick":SetShareUrl,
+                "bdPic":"",
+                "bdMini":"2",
+                "searchPic":"1",
+                "bdMiniList":false
+            },
+            "share": {
+                "bdSize":"16"
+            }
+        };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com../api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+

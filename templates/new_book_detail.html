@@ -1,0 +1,276 @@
+{%  extends 'book_base.html' %}
+{%  block title %}图书详情{%  endblock %}
+{%  block custom_bread %}
+    {% load staticfiles %}
+    <section>
+	<div class="wp">
+		<div class="crumbs">
+			<ul>
+				<li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'book:book_list' %}">图书列表</a>></li>
+				<li>图书详情</li>
+			</ul>
+		</div>
+	</div>
+</section>
+{%  endblock %}
+{% block custom_nav %}
+            <nav>
+				<div class="nav">
+					<div class="wp">
+						<ul>
+							<li ><a href="{% url 'index' %}">首页</a></li>
+							<li class="active" >
+								<a href="{% url 'book:book_list' %}">
+									热门信息<img class="hot" src="{%  static 'images/nav_hot.png' %}">
+								</a>
+							</li>
+							<li >
+								<a href="teachers-list.html">电影列表</a>
+							</li>
+							<li ><a href="{% url 'book:book_list' %}">图书列表</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+{% endblock %}
+
+{%  block custom_content %}
+    <section>
+	<div class="wp">
+		<div class="groupPurchase_detail detail">
+			<div class="toppro">
+				<div class="left">
+					<div class="picbox">
+						<div class="tb-booth tb-pic">
+							<img width="440" height="450" src="{{ MEDIA_URL }}{{ book.image }}" class="jqzoom" />
+						</div>
+
+					</div>
+					<div class="des">
+                        <h1><b>{{ book.book_name }}</b></h1>
+						<span class="key">作者：{{ book.book_author }}</span>
+						<div class="prize">
+							<span class="fl">评分：<i class="key"> {{ book.stars }}</i></span>
+							<span class="fr">收藏人数：{{ book.fav_nums }}</span>
+						</div>
+						<ul class="parameter">
+							<li><span class="pram word3">出&nbsp;版&nbsp;社：</span><span>{{ book.book_public }}</span></li>
+                            <li><span class="pram word3">出版时间：</span><span>{{ book.book_year }}</span></li>
+                            <li><span class="pram word3">图书类别：</span><span title="">{{ real_tag }}/{{ book1.book_kind }}</span></li>
+							<li class="piclist"><span class="pram word4">收藏用户：</span>
+                                 {%  for fav_user in book1.get_fav_users %}
+                                <span class="pic"><img width="40" height="40" src="{{ MEDIA_URL }}{{ fav_user.user.image }}"/></span>
+                                {% endfor %}
+
+							</li>
+						</ul>
+
+						<div class="btns">
+
+							<div class="btn  colectgroupbtn  notlogin  "data-favid="22" data-fav-type="1" id="bookbtn">
+                                {% if book_has_fav %}已收藏{% else %}收藏 {% endif %}
+                            </div>
+                                <div class="buy btn"><a style="color: white" href="{% url 'book:book_comment' book.book_no  %}">评论</a></div>
+						</div>
+					</div>
+
+                    <div class="group-share-box">
+                        <div class="bdsharebuttonbox"
+                             data-text="心好痛"
+                             data-desc="我在#这里#发现了"
+                             data-comment=""
+                             data-url="/group/groupdetail/15/">
+                            <span class="fl">分享到：</span>
+                            <a href="#" class="bds_more" data-cmd="more"></a>
+                            <a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone"></a>
+                            <a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina"></a>
+                            <a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq"></a>
+                            <a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren"></a>
+                            <a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin"></a>
+                        </div>
+                    </div>
+				</div>
+				<div class="right">
+					<div class="head">
+						<h1>人气榜</h1>
+						<p>热门图书，come on</p>
+					</div>
+					<div class="pic">
+                        <a href="{% url 'book:book_detail' hot_book.book_no %}">
+                            <img width="100" height="150" src="{{ MEDIA_URL }}{{ hot_book.image }} "/>
+                        </a>
+                    </div>
+					<a href="{% url 'book:book_detail' hot_book.book_no %}">
+                        <h2 class="center" title="hot_book.book_name">{{ hot_book.book_name  }}</h2>
+                    </a>
+                    <div class="btn  collectionbtn  notlogin
+                 "data-favid="22" data-fav-type="1" id="hotbtn">
+                  {%  if hot_has_fav  %}已收藏{% else %}收藏{%  endif %}
+
+{#					<div class="btn  collectionbtn notlogin#}
+{#					"data-favid="22" data-fav-type="1"  id="jsRightbtn">#}
+{#                         {% if has_fav %}已收藏{% else %}收藏{% endif %}#}
+                   </div>
+                <div class="clear">
+						<ul>
+                            <li>
+                                <span>点 &nbsp;击&nbsp; 数：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {{ hot_book.click_nums }}</span>
+                            </li>
+                            <li>
+                                <span>收 &nbsp;藏&nbsp; 数：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ hot_book.fav_nums }}</span>
+                            </li>
+							<li>图书类型：&nbsp;&nbsp;&nbsp;&nbsp;{{ real_tag }}/{{hot_book.book_kind }}</li>
+							<li>评&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ book.stars }}
+                                &nbsp;&nbsp;
+								    <img title="", src="{% static 'images/gold.png' %}"/>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+    <section>
+	<div class="wp">
+		<div class="list groupPurchase_detail_pro">
+			<div class="left layout">
+				<div class="head">
+					<ul class="tab_header">
+						<li class="active">图书详情</li>
+					</ul>
+				</div>
+				<div class="tab_cont tab_cont1">
+                    <span ><h1 style="color:#f76249;text-align: center">{{ book.book_name }}</h1></span>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">简介:</span>
+                    </h2>
+                     <p class="ue_t" style="text-indent:2em;">
+                        作者：{{ book.book_author}}
+                    </p>
+                    <p class="ue_t" style="text-indent:2em;">
+                        出版社：{{ book.book_public}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        出版时间：{{ book.book_year}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        价格：{{ book.book_price}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        页数：{{ book.book_page }}
+                    </p>
+                    <p class="ue_t" style="text-indent:2em;">
+                        评分：{{ book.stars}}
+                    </p>
+                    <p class="ue_t" style="text-indent:20em;">
+                        <img src="{{ MEDIA_URL }}{{ book.image }}" title="" alt="57aa86a0000145c512000460.jpg"/>
+                    </p>
+                     <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">图书简介：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {{ book.book_intro }}
+                    </p>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">作者简介:</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {{ book.author_intro }}
+                    </p>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">目录：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                         {% for tip in mulu %}
+                        <h4 style="text-indent:2em;">{{ tip }}</h4>
+                         {% endfor %}
+                    </p>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">丛书信息：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {{ book.book_others }}
+                    </p>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">类似书籍：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {% for recomm_book in recommendations%}
+                        <h4 style="text-indent:2em;">{{ recomm_book }}</h4>
+                         {% endfor %}
+
+                    </p>
+
+				</div>
+				<div class="tab_cont tab_cont2" >
+					<div class="comment">
+						<div class="comenlist">
+
+	                    </div>
+					</div>
+				</div>
+			</div>
+			<div class="right layout">
+				<div class="head">相关图书推荐</div>
+                <div class="group_recommend">
+                    {% for relate_book in relate_books %}
+                        <dl>
+                            <dt>
+                                <a target="_blank" href="{%  url 'book:book_detail' relate_book.book_no %}">
+                                    <img width="240" height="220" class="scrollLoading" src="{{ MEDIA_URL }}{{ relate_book.image }}"/>
+                                </a>
+                            </dt>
+                            <dd>
+                                <a target="_blank" href="{%  url 'book:book_detail' relate_book.book_no %}">
+                                    <h2>{{ relate_book.book_name }}</h2></a>
+                                <span class="fl">收藏人数：<i class="key">{{ relate_book.fav_nums }}</i></span>
+                            </dd>
+                        </dl>
+                    {% endfor %}
+                </div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+         function add_fav(current_elem, fav_no, fav_type){
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url:"{% url 'book:add_fav' %}",
+                data:{'fav_no':fav_no, 'fav_type':fav_type},
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+                    if(data.status == 'fail'){
+                        if(data.msg == '用户未登录'){
+                            window.location.href="{% url 'login' %}";
+                        }else{
+                            alert(data.msg)
+                        }
+
+                    }else if(data.status == 'success'){
+                        current_elem.text(data.msg)
+                    }
+                },
+            });
+        }
+        $('#bookbtn').on('click', function(){
+            add_fav($(this), {{ book1.book_no }}, "sj");
+        });
+        $('#hotbtn').on('click', function(){
+            add_fav($(this), {{ hot_book.book_no }}, "sj");
+        });
+
+</script>
+
+{% endblock %}
+

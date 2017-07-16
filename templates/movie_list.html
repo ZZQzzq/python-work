@@ -1,0 +1,169 @@
+{%  extends 'movie_base.html' %}
+{%  block title %}电影列表页{%  endblock %}
+{%  block custom_bread %}
+    {% load staticfiles %}
+    <section>
+            <div class="wp">
+                <ul  class="crumbs">
+                    <li><a href="index.html">首页</a>></li>
+                    <li>电影列表</li>
+                </ul>
+            </div>
+        </section>
+{%  endblock %}
+{%  block custom_content %}
+    <section>
+        <div class="wp butler_list_box list">
+
+        <div class='left'>
+
+            <div class="listoptions">
+                <ul>
+                    <li>
+                        <h2>电影标签</h2>
+                        <div class="cont">
+                                <a href="?"><span class="{% ifequal movie_tag '' %}active2{% endifequal %}">全部</span></a>
+                        {% for tag in all_tags %}
+                                <a href="?movietag={{ tag.name }}"><span class="{% ifequal movie_tag tag.name %}active2{% endifequal %}">{{ tag.name }}</span></a>
+                        {% endfor %}
+                        </div>
+                    <div class="more">更多</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="all">共<span class="key">{{ movie_nums }}</span>部</div>
+            <div class="butler_list company list">
+            <div class="layout">
+                <div class="head">
+                    <ul class="tab_header">
+                        <li class="{%  ifequal sort  ''  %}active{% endifequal %}"><a href="?movietag={{ movie_tag }}">全部</a> </li>
+                        <li class="{%  ifequal sort 'click_nums' %}active{% endifequal %}"><a href="?sort=click_nums&movietag={{ movie_tag }}">点击量 &#8595;</a></li>
+                        <li class="{%  if sort == 'fav_nums'  %}active{% endif %}"><a href="?sort=fav_nums&movietag={{ movie_tag }}">收藏量 &#8595;</a></li>
+                        <li class="{%  if sort == 'stars'  %}active{% endif %}"><a href="?sort=stars&movietag={{ movie_tag }}&keywords={{ search_keywords }}">评分 &#8595;</a></li>
+                    </ul>
+                </div>
+                {% for movie in all_movies.object_list %}
+                    <dl class="des difdes">
+                        <dt>
+                        <a href="{% url 'movie:movie_detail' movie.movie_no %}">
+                            <img style="width: 100px"  class="scrollLoading" data-url="{{MEDIA_URL}}{{movie.image }}"/>
+                        </a>
+                    </dt>
+                        <dd>
+                            <div class="clearfix">
+                                 <a href="{% url 'movie:movie_detail' movie.movie_no %}">
+                                     <h1>{{ movie.movie_name }}</h1>
+                                     <div class="pic fl">
+    {#                                         <img src="{%  static 'images/authentication.png' %}"/>#}
+                                             <img src="{% static 'images/gold.png' %}"/>
+
+                                     </div>
+                                 </a>
+                            </div>
+                            <ul class="cont">
+                                <li class="first"><p class="pic9">点击量：<span>{{ movie.click_nums}}</span></p><p class="c7">收藏量：<span>{{ movie.fav_nums }}</span></p></li>
+                                <li class="c8" style="padding-left:18px;">{{movie.movie_info }}</li>
+                                <li class="pic10" style="padding-left:18px;">豆瓣评分：
+
+                                        <a href="{{ movie.movie_url }}">{{ movie.movie_url }}</a>
+
+                                        <a href="">{{ movie.stars }}</a>
+
+                                </li>
+                            </ul>
+                        </dd>
+    {#                    <div class="buy start_groupbuy jsShowPerfect2" data-id="22"><br/>联系<br/>服务</div>#}
+                    </dl>
+
+                {% endfor %}
+            </div>
+            {% load i18n %}
+             <div class="pageturn">
+                <ul class="pagelist">
+                        {% if all_movies.has_previous %}
+                            <li class="long"><a href="?page={{ all_movies.previous_page_number}}&sort={{ sort }}&moviekind={{ moviekind_id }}&movietag={{ movie_tag }}">上一页</a></li>
+                        {% endif %}
+                        {% for page in all_movies.paginator.page_range %}
+                                {%  if page %}
+                                   {% ifequal page all_books.number  %}
+                                           <li class="active"><a href="?page={{ page.querystring }}&sort={{ sort }}&moviekind={{ moviekind_id }}&movietag={{ movie_tag }}" class="page" >{{ page }}</a></li>
+                                    {%  else %}
+                                          <li> <a href="?page={{ page }}&sort={{ sort }}&moviekind={{ moviekind_id }}&movietag={{ movie_tag }}" class="page" >{{ page }}</a></li>
+                                   {%  endifequal %}
+                               {% else %}
+                                    <li class="none"><a href="">...</a></li>
+                                {% endif %}
+                        {%  endfor %}
+                        {% if all_movies.has_next %}
+                             <li class="long"><a href="?page={{ all_movies.next_page_number }}&sort={{ sort }}&moviekind={{ moviekind_id }}&booktag={{ movie_tag }}">下一页</a></li>
+                        {% endif %}
+                </ul>
+            </div>
+            </div>
+        </div>
+        <div class="right companyright">
+                <div class="head">我想看</div>
+                <form class="rightform" id="jsStayForm">
+                    <div>
+                        <img src="{%  static 'images/rightform1.png' %}"/>
+                        <input type="text" name="movie_name" id="companyName" placeholder="按照电影名搜索" maxlength="25" />
+                    </div>
+                    <div>
+                        <img src="{% static 'images/rightform2.png' %}"/>
+                        <input type="text" name="movie_type" id="companyMobile" placeholder="按照类别搜索"/>
+                    </div>
+                    <div>
+                        <img src="{% static 'images/rightform3.png' %}"/>
+                        <input type="text" name="movie_star" id="companyAddress" placeholder="按照评分搜索" maxlength="50" />
+                    </div>
+                    <p class="error company-tips" id="jsCompanyTips"></p>
+                    <input class="btn" type="text" id="jsStayBtn" value="立即查询>>" />
+                <input type='hidden' name='csrfmiddlewaretoken' value='5I2SlleZJOMUX9QbwYLUIAOshdrdpRcy' />
+                    {% csrf_token %}
+                </form>
+            </div>
+
+            <div class="right companyrank layout">
+                <div class="head">电影榜</div>
+
+                {%  for current in hot_movies %}
+                    <dl class="des">
+                        <dt class="num fl">{{ forloop.counter }}</dt>
+                        <dd>
+                            <a href="/company/2/"><h1>{{ current.movie_name }}</h1></a>
+                            <p>{{ current.stars }}</p>
+                        </dd>
+                    </dl>
+                {% endfor %}
+
+
+            </div>
+            </div>
+    </section>
+{%  endblock %}
+
+{#{% block custom_js %}#}
+{#<script>#}
+{#    $(function(){#}
+{#        $('#jsStayBtn').on('click', function(){#}
+{#            $.ajax({#}
+{#                cache: false,#}
+{#                type: "POST",#}
+{#                url:"{% url 'book:add_ask' %}",#}
+{#                data:$('#jsStayForm').serialize(),#}
+{#                async: true,#}
+{#                success: function(data) {#}
+{#                    if(data.status == 'success'){#}
+{#                        $('#jsStayForm')[0].reset();#}
+{#                        alert("提交成功")#}
+{#                    }else if(data.status == 'fail'){#}
+{#                        $('#jsCompanyTips').html(data.msg)#}
+{#                    }#}
+{#                },#}
+{#            });#}
+{#        });#}
+{#    })#}
+{##}
+{#</script>#}
+{#{% endblock %}#}
+

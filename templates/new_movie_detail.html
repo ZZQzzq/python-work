@@ -1,0 +1,283 @@
+{%  extends 'movie_base.html' %}
+{%  block title %}电影详情{%  endblock %}
+{%  block custom_bread %}
+    {% load staticfiles %}
+    <section>
+	<div class="wp">
+		<div class="crumbs">
+			<ul>
+				<li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'movie:movie_list' %}">电影列表</a>></li>
+				<li>电影详情</li>
+			</ul>
+		</div>
+	</div>
+</section>
+{%  endblock %}
+{% block custom_nav %}
+            <nav>
+				<div class="nav">
+					<div class="wp">
+						<ul>
+							<li ><a href="{% url 'index' %}">首页</a></li>
+							<li class="active" >
+								<a href="{% url 'movie:movie_list' %}">
+									热门信息<img class="hot" src="{%  static 'images/nav_hot.png' %}">
+								</a>
+							</li>
+							<li >
+								<a href="{% url 'movie:movie_list' %}">电影列表</a>
+							</li>
+							<li ><a href="{% url 'book:book_list' %}">图书列表</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+{% endblock %}
+
+{%  block custom_content %}
+    <section>
+	<div class="wp">
+		<div class="groupPurchase_detail detail">
+			<div class="toppro">
+				<div class="left">
+					<div class="picbox">
+						<div class="tb-booth tb-pic">
+							<img width="440" height="450" src="{{ MEDIA_URL }}{{ movie1.image }}" class="jqzoom" />
+						</div>
+
+					</div>
+					<div class="des">
+                        <h1><b>{{ movie.movie_name }}</b></h1>
+						<span class="key">导演：{{ movie.movie_director }}</span>
+						<div class="prize">
+							<span class="fl">评分：<i class="key"> {{ movie.stars }}</i></span>
+							<span class="fr">收藏人数：{{ movie.fav_nums }}</span>
+						</div>
+						<ul class="parameter">
+							<li><span class="pram word3">编&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;剧：</span><span>{{ movie.movie_pl }}</span></li>
+                            <li><span class="pram word3">上映时间：</span><span>{{  movie.movie_ReleaseDate }}</span></li>
+                            <li><span class="pram word3">主&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;演：</span><span title="">{{ movie.movie_actor }}</span></li>
+							<li class="piclist"><span class="pram word4">收藏用户：</span>
+                                 {%  for fav_user in movie1.get_fav_users %}
+                                <span class="pic"><img width="40" height="40" src="{{ MEDIA_URL }}{{ fav_user.user.image }}"/></span>
+                                {% endfor %}
+
+							</li>
+						</ul>
+
+						<div class="btns">
+
+							<div class="btn  colectgroupbtn  notlogin
+                                 "data-favid="22" data-fav-type="1" id="moviebtn">
+                                {% if movie_has_fav %}已收藏{% else %}收藏 {% endif %}
+                            </div>
+                                <div class="buy btn"><a style="color: white" href="{% url 'movie:movie_comment' movie.movie_no  %}">评论</a></div>
+						</div>
+					</div>
+
+                    <div class="group-share-box">
+                        <div class="bdsharebuttonbox"
+                             data-text="心好痛"
+                             data-desc="我在#这里#发现了"
+                             data-comment=""
+                             data-url="/group/groupdetail/15/">
+                            <span class="fl">分享到：</span>
+                            <a href="#" class="bds_more" data-cmd="more"></a>
+                            <a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone"></a>
+                            <a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina"></a>
+                            <a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq"></a>
+                            <a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren"></a>
+                            <a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin"></a>
+                        </div>
+                    </div>
+				</div>
+				<div class="right">
+					<div class="head">
+						<h1>人气榜</h1>
+						<p>热门电影，come on</p>
+					</div>
+					<div class="pic">
+                        <a href="{% url 'movie:movie_detail' hot_movie.movie_no %}">
+                            <img width="100" height="150" src="{{ MEDIA_URL }}{{ hot_movie.image }} "/>
+                        </a>
+                    </div>
+					<a href="{% url 'movie:movie_detail' hot_movie.movie_no %}">
+                        <h2 class="center" title="hot_movie.movie_name">{{ hot_movie.movie_name  }}</h2>
+                    </a>
+                    <div class="btn  collectionbtn  notlogin
+                 "data-favid="22" data-fav-type="1" id="hotbtn">
+                  {%  if hot_has_fav  %}已收藏{% else %}收藏{%  endif %}
+                   </div>
+                <div class="clear">
+						<ul>
+                            <li>
+                                <span>点 &nbsp;击&nbsp; 数：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {{ hot_movie.click_nums }}</span>
+                            </li>
+                            <li>
+                                <span>收 &nbsp;藏&nbsp; 数：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ hot_movie.fav_nums }}</span>
+                            </li>
+							<li>电影导演：&nbsp;&nbsp;&nbsp;&nbsp;{{hot_movie.movie_director}}</li>
+							<li>评&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;分&nbsp;: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ movie.stars }}
+                                &nbsp;&nbsp;
+								    <img title="", src="{% static 'images/gold.png' %}"/>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+    <section>
+	<div class="wp">
+		<div class="list groupPurchase_detail_pro">
+			<div class="left layout">
+				<div class="head">
+					<ul class="tab_header">
+						<li class="active">电影详情</li>
+					</ul>
+				</div>
+				<div class="tab_cont tab_cont1">
+                    <span> <h1 style="color:#f76249;text-align: center">{{ movie.movie_name }}</h1></span>
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">简介:</span>
+                    </h2>
+                     <p class="ue_t" style="text-indent:2em;">
+                        导演：{{ movie.movie_director}}
+                    </p>
+                    <p class="ue_t" style="text-indent:2em;">
+                        编剧：{{ movie.movie_pl}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        主演：{{ movie.movie_actor}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        上映时间：{{ movie.movie_ReleaseDate}}
+                    </p>
+                     <p class="ue_t" style="text-indent:2em;">
+                        国家/地区：{{ movie.country }}
+                    </p>
+                       <p class="ue_t" style="text-indent:2em;">
+                        语言：{{ movie.language }}
+                    </p>
+                       <p class="ue_t" style="text-indent:2em;">
+                        类型：{{ movie.movie_type }}
+                    </p>
+                    <p class="ue_t" style="text-indent:2em;">
+                        时长：{{ movie.runtime }}分钟
+                    </p>
+                    <p class="ue_t" style="text-indent:2em;">
+                        评分：{{ movie.stars}}
+                    </p>
+                    <p class="ue_t" style="text-indent:20em;">
+                        <img src="{{ MEDIA_URL }}{{ movie1.image }}" title="" alt="57aa86a0000145c512000460.jpg"/>
+                    </p>
+                     <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">电影简介：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {{ movie.movie_intro }}
+                    </p>
+{#                    <h3>#}
+{#                        <span class="ue_t" style="font-family:幼圆">作者简介:</span>#}
+{#                    </h3>#}
+{#                    <p class="ue_t" style="text-indent:2em;">#}
+{#                        {{ movie.author_intro }}#}
+{#                    </p>#}
+{#                    <h3>#}
+{#                        <span class="ue_t" style="font-family:幼圆">目录：</span>#}
+{#                    </h3>#}
+{#                    <p class="ue_t" style="text-indent:2em;">#}
+{#                        {{ movie.mu_lu }}#}
+{#                    </p>#}
+{#                    <h3>#}
+{#                        <span class="ue_t" style="font-family:幼圆">丛书信息：</span>#}
+{#                    </h3>#}
+{#                    <p class="ue_t" style="text-indent:2em;">#}
+{#                        {{ movie.movie_others }}#}
+{#                    </p>#}
+                    <h2>
+                        <span class="ue_t" style="font-family:幼圆; color:#f76249;">类似电影：</span>
+                    </h2>
+                    <p class="ue_t" style="text-indent:2em;">
+                        {% for recomm_movie in recommendations%}
+                        <h4 style="text-indent:2em;">{{ recomm_movie }}</h4>
+                         {% endfor %}
+                    </p>
+
+				</div>
+				<div class="tab_cont tab_cont2" >
+					<div class="comment">
+						<div class="comenlist">
+
+	                    </div>
+					</div>
+				</div>
+			</div>
+			<div class="right layout">
+				<div class="head">相关电影推荐</div>
+                <div class="group_recommend">
+                    {% for relate_movie in relate_movies %}
+                        <dl>
+                            <dt>
+                                <a target="_blank" href="{% url 'movie:movie_detail' relate_movie.movie_no %}">
+                                    <img width="240" height="220" class="scrollLoading" src="{{ MEDIA_URL }}{{ relate_movie.image }}"/>
+                                </a>
+                            </dt>
+                            <dd>
+                                <a target="_blank" href=""><h2>{{ relate_movie.movie_name }}</h2></a>
+                                <span class="fl">收藏人数：<i class="key">{{ relate_movie.fav_nums }}</i></span>
+                            </dd>
+                        </dl>
+                    {% endfor %}
+                </div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+//收藏分享
+        function add_fav(current_elem, fav_no, fav_type){
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url:"{% url 'movie:add_fav' %}",
+                data:{'fav_no':fav_no, 'fav_type':fav_type},
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+                    if(data.status == 'fail'){
+                        if(data.msg == '用户未登录'){
+                            window.location.href="{% url 'login' %}";
+                        }else{
+                            alert(data.msg)
+                        }
+
+                    }else if(data.status == 'success'){
+                        current_elem.text(data.msg)
+                    }
+                },
+            });
+        }
+
+
+        $('#moviebtn').on('click', function(){
+            add_fav($(this), {{ movie1.movie_no }}, "dy");
+        });
+        $('#hotbtn').on('click', function(){
+            add_fav($(this), {{ hot_movie.movie_no }}, "dy");
+        });
+
+
+</script>
+
+
+{% endblock %}
+

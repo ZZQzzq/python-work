@@ -1,0 +1,184 @@
+{%  extends 'book_base.html' %}
+{%  block title %}图书列表页{%  endblock %}
+{%  block custom_bread %}
+    {% load staticfiles %}
+    <section>
+            <div class="wp">
+                <ul  class="crumbs">
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li>图书列表</li>
+                </ul>
+            </div>
+        </section>
+{%  endblock %}
+{%  block custom_content %}
+    <section>
+        <div class="wp butler_list_box list">
+
+        <div class='left'>
+
+            <div class="listoptions">
+                <ul>
+                    <li>
+                        <h2>图书标签</h2>
+                        <div class="cont">
+                                <a href="?bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag '' %}active2{% endifequal %}">全部</span></a>
+                                <a href="?booktag=lx&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'lx' %}active2{% endifequal %}">流行</span></a>
+                                <a href="?booktag=wh&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'wh' %}active2{% endifequal %}">文化</span></a>
+                                <a href="?booktag=wx&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'wx' %}active2{% endifequal %}">文学</span></a>
+                                <a href="?booktag=sh&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'sh' %}active2{% endifequal %}">生活</span></a>
+                                <a href="?booktag=kj&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'kj' %}active2{% endifequal %}">科技</span></a>
+                                <a href="?booktag=jg&bookkind={{ bookkind_id }}"><span class="{% ifequal book_tag 'jg' %}active2{% endifequal %}">经管</span></a>
+
+                        </div>
+                    </li>
+                    <li>
+                        <h2>图书类型</h2>
+                        <div class="more">更多</div>
+                        <div class="cont">
+                            <a href="?booktag={{ book_tag }}"><span class="{% ifequal bookkind_id '' %}active2{% endifequal %}">全部</span></a>
+                            {% for kind in all_kinds %}
+                                {% if tag_id == 0 %}
+                                <a href="?bookkind={{ kind.id }}&booktag={{ book_tag }}"><span class="{% ifequal bookkind_id kind.id|stringformat:"i" %}active2{% endifequal %}">{{ kind.book_name }}</span></a>
+                                {% endif %}
+                                {% if  kind.book_tag_id == tag.id %}
+                                    <a href="?bookkind={{ kind.id }}&booktag={{ book_tag }}"><span class="{% ifequal bookkind_id kind.id|stringformat:"i" %}active2{% endifequal %}">{{ kind.book_name }}</span></a>
+                                {% endif %}
+                            {% endfor %}
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="all">共<span class="key">{{ book_nums }}</span>本</div>
+            <div class="butler_list company list">
+            <div class="layout">
+                <div class="head">
+                    <ul class="tab_header">
+                        <li class="{%  ifequal sort  ''  %}active{% endifequal %}"><a href="?bookkind={{ bookkind_id }}&booktag={{ book_tag }}">全部</a> </li>
+                        <li class="{%  ifequal sort 'click_nums' %}active{% endifequal %}"><a href="?sort=click_nums&bookkind={{ bookkind_id }}&booktag={{ book_tag }}">点击量 &#8595;</a></li>
+                        <li class="{%  if sort == 'fav_nums'  %}active{% endif %}"><a href="?sort=fav_nums&bookkind={{ bookkind_id }}&booktag={{ book_tag }}">收藏量 &#8595;</a></li>
+                        <li class="{%  if sort == 'stars'  %}active{% endif %}"><a href="?sort=stars&bookkind={{ bookkind_id }}&booktag={{ book_tag }}&keywords={{ search_keywords }}">评分 &#8595;</a></li>
+                    </ul>
+                </div>
+                {% for book in all_books.object_list %}
+                    <dl class="des difdes">
+                        <dt>
+                        <a href="{% url 'book:book_detail'  book.book_no %}">
+                            <img style="width: 100px"  class="scrollLoading" data-url="{{MEDIA_URL}}{{book.image }}"/>
+                        </a>
+                    </dt>
+                        <dd>
+                            <div class="clearfix">
+                                 <a href="{% url 'book:book_detail' book.book_no %}">
+                                     <h1>{{ book.book_name }}</h1>
+                                     <div class="pic fl">
+    {#                                         <img src="{%  static 'images/authentication.png' %}"/>#}
+                                             <img src="{% static 'images/gold.png' %}"/>
+
+                                     </div>
+                                 </a>
+                            </div>
+                            <ul class="cont">
+                                <li class="first"><p class="pic9">点击量：<span>{{ book.click_nums}}</span></p><p class="c7">收藏量：<span>{{ book.fav_nums }}</span></p></li>
+                                <li class="c8" style="padding-left:18px;">{{book.book_info }}</li>
+                                <li class="pic10" style="padding-left:18px;">豆瓣评分：
+                                        <a href="{{ book.book_url }}">{{ book.stars }}</a>
+                                </li>
+                            </ul>
+                        </dd>
+    {#                    <div class="buy start_groupbuy jsShowPerfect2" data-id="22"><br/>联系<br/>服务</div>#}
+                    </dl>
+
+                {% endfor %}
+            </div>
+            {% load i18n %}
+             <div class="pageturn">
+                <ul class="pagelist">
+                        {% if all_books.has_previous %}
+                            <li class="long"><a href="?page={{ all_books.previous_page_number}}&sort={{ sort }}&bookkind={{ bookkind_id }}&booktag={{ book_tag }}">上一页</a></li>
+                        {% endif %}
+                        {% for page in all_books.paginator.page_range %}
+                                {%  if page %}
+                                   {% ifequal page all_books.number  %}
+                                           <li class="active"><a href="?page={{ page.querystring }}&sort={{ sort }}&bookkind={{ bookkind_id }}&booktag={{ book_tag }}" class="page" >{{ page }}</a></li>
+                                    {%  else %}
+                                          <li> <a href="?page={{ page }}&sort={{ sort }}&bookkind={{ bookkind_id }}&booktag={{ book_tag }}" class="page" >{{ page }}</a></li>
+                                   {%  endifequal %}
+                               {% else %}
+                                    <li class="none"><a href="">...</a></li>
+                                {% endif %}
+                        {%  endfor %}
+                        {% if all_books.has_next %}
+                             <li class="long"><a href="?page={{ all_books.next_page_number }}&sort={{ sort }}&bookkind={{ bookkind_id }}&booktag={{ book_tag }}">下一页</a></li>
+                        {% endif %}
+                </ul>
+            </div>
+            </div>
+        </div>
+        <div class="right companyright">
+                <div class="head">我要读</div>
+                <form class="rightform" id="jsStayForm">
+                    <div>
+                        <img src="{%  static 'images/rightform1.png' %}"/>
+                        <input type="text" name="book_name" id="companyName" placeholder="按照书名搜索" maxlength="25" />
+                    </div>
+                    <div>
+                        <img src="{% static 'images/rightform2.png' %}"/>
+                        <input type="text" name="book_type" id="companyMobile" placeholder="按照类别搜索"/>
+                    </div>
+                    <div>
+                        <img src="{% static 'images/rightform3.png' %}"/>
+                        <input type="text" name="book_star" id="companyAddress" placeholder="按照评分搜索" maxlength="50" />
+                    </div>
+                    <p class="error company-tips" id="jsCompanyTips"></p>
+                    <input class="btn" type="text" id="jsStayBtn" value="立即查询>>" />
+                <input type='hidden' name='csrfmiddlewaretoken' value='5I2SlleZJOMUX9QbwYLUIAOshdrdpRcy' />
+                    {% csrf_token %}
+                </form>
+            </div>
+
+            <div class="right companyrank layout">
+                <div class="head">好书榜</div>
+
+                {%  for current in hot_books %}
+                    <dl class="des">
+                        <dt class="num fl">{{ forloop.counter }}</dt>
+                        <dd>
+                            <a href="{% url 'book:book_detail' current.book_no %}"><h1>{{ current.book_name }}</h1></a>
+                            <p>{{ current.stars }}</p>
+                        </dd>
+                    </dl>
+                {% endfor %}
+
+
+            </div>
+            </div>
+    </section>
+{%  endblock %}
+
+{#{% block custom_js %}#}
+{#<script>#}
+{#    $(function(){#}
+{#        $('#jsStayBtn').on('click', function(){#}
+{#            $.ajax({#}
+{#                cache: false,#}
+{#                type: "POST",#}
+{#                url:"{% url 'book:add_ask' %}",#}
+{#                data:$('#jsStayForm').serialize(),#}
+{#                async: true,#}
+{#                success: function(data) {#}
+{#                    if(data.status == 'success'){#}
+{#                        $('#jsStayForm')[0].reset();#}
+{#                        alert("提交成功")#}
+{#                    }else if(data.status == 'fail'){#}
+{#                        $('#jsCompanyTips').html(data.msg)#}
+{#                    }#}
+{#                },#}
+{#            });#}
+{#        });#}
+{#    })#}
+{##}
+{#</script>#}
+{#{% endblock %}#}
+

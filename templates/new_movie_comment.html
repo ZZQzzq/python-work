@@ -1,0 +1,201 @@
+{%  extends 'movie_base.html' %}
+{% load staticfiles %}
+{%  block title %}电影评论{%  endblock %}
+{%  block custom_bread %}
+    {% load staticfiles %}
+    <section>
+	<div class="wp">
+		<div class="crumbs">
+			<ul>
+				<li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'movie:movie_list' %}">电影列表</a>></li>
+                <li><a href="{% url 'movie:movie_detail' movie1.movie_no %}">电影详情</a>></li>
+				<li>电影评价</li>
+			</ul>
+		</div>
+	</div>
+</section>
+{%  endblock %}
+{% block custom_css %}
+
+    <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/course/common-less.css' %}">
+	<link rel="stylesheet" type="text/css" href="{%  static 'css/muke/course/course-comment.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/common-less.css' %}">
+
+{% endblock %}
+
+{%  block custom_content %}
+    <div id="main">
+    <div class="course-info-main clearfix w has-progress">
+
+        <div class="info-bar clearfix">
+            <div class="content-wrap clearfix">
+                <div class="content">
+                    <!--发布评论-->
+                    <div id="js-pub-container" class="issques clearfix js-form">
+                        <div class="wgt-ipt-wrap pub-editor-wrap " id="js-pl-input-fake">
+                            <textarea id="js-movie-textarea" class="" placeholder="我想说.............." ></textarea>
+                        </div>
+                        <input type="button" id="js-movie-submit" class="pub-btn" data-cid="452" value="发表评论">
+                        <p class="global-errortip js-global-error"></p>
+                    </div>
+                    <div id="course_note">
+                        <ul class="mod-post" id="comment-list">
+                            {%  for comment in all_comments %}
+
+                            <li class="post-row">
+                                <div class="media">
+                                    <span target="_blank"><img src='{{ MEDIA_URL }}{{ comment.user.image }}' width='40' height='40' /></span>
+                                </div>
+                                <div class="bd">
+                                    <div class="tit">
+                                        <span target="_blank">{{ comment.user.nick_name  }}</span>
+                                    </div>
+                                    <p class="cnt">{{ comment.comments }}</p>
+                                    <div class="footer clearfix">
+                                        <span title="创建时间" class="l timeago">时间：{{ comment.add_time }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有用：{{ comment.likenum }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;踩： {{ comment.dislikenum }}</span>
+                                    </div>
+
+                                </div>
+                               <div>
+                                        <div class="delete jsAddLike_num" data-user="{{ comment.user_id }}" data-movie="{{ comment.movie_id }}" data-id="{{ comment.id }}"><img src='{% static 'images/zan/like.png' %}' width='30' height='30' /></div>
+                                        <div class="delete jsDelLike_num" data-user="{{ comment.user_id }}" data-movie="{{ comment.movie_id }}" data-id="{{ comment.id }}"><img src='{% static 'images/zan/dislike.png' %}' width='30' height='30' /></div>
+                               </div>
+
+                            </li>
+                            {% endfor %}
+
+
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="aside r">
+                    <div class="bd">
+                        <div class="box mb40">
+                        <div class="cp-other-learned  js-comp-tabs">
+                            <div class="cp-header clearfix">
+                                <h2 class="cp-tit l">浏览过该电影的用户还看过</h2>
+                            </div>
+                            <div class="cp-body">
+                                <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="course" style="display: block">
+                                    <!-- img 200 x 112 -->
+                                    <ul class="other-list">
+                                        {%  for relate_movie in relate_movies %}
+                                        <li>
+                                            <a href="{% url 'movie:movie_detail' relate_movie.movie_no %}" target="_blank">
+                                                <img src="{{ MEDIA_URL }}{{ relate_movie.image }}" alt="{{ relate_movie.movie_name }}">
+                                                <span class="name autowrap">{{ relate_movie.movie_name }}</span>
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+
+                                    </ul>
+                                </div>
+{#                                <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="plan">#}
+{#                                    <ul class="other-list">#}
+{#                                        <li class="curr">#}
+{#                                            <a href="/course/programdetail/pid/31?src=sug" target="_blank">#}
+{#                                                <img src="http://img.mukewang.com/56551e6700018b0c09600720-240-135.jpg" alt="Java工程师">#}
+{#                                                <span class="name autowrap">Java工程师</span>#}
+{#                                            </a>#}
+{#                                        </li>#}
+{#                                    </ul>#}
+{#                                </div>#}
+                            </div>
+                        </div>
+                        </div>
+                 </div>
+            <div class="clear"></div>
+
+        </div>
+
+    </div>
+</div>
+    </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_js %}
+<script type="text/javascript">
+    //添加评论
+    $('#js-movie-submit').on('click', function(){
+        var comments = $("#js-movie-textarea").val()
+        if(comments == ""){
+            alert("评论不能为空")
+            return
+        }
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url:"{% url 'movie:add_comment' %}",
+            data:{'movie_no':{{ movie1.movie_no }}, 'comments':comments },
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+                if(data.status == 'fail'){
+                    if(data.msg == '用户未登录'){
+                        window.location.href="{% url 'index' %}";
+                    }else{
+                        alert(data.msg)
+                    }
+
+                }else if(data.status == 'success'){
+                    window.location.reload();//刷新当前页面.
+                }
+            },
+        });
+    });
+</script>
+<script type="text/javascript">
+    $('.jsAddLike_num').on('click', function(){
+            var _this = $(this),
+                datauser = _this.attr('data-user'),
+                dataid = _this.attr('data-id'),
+                datamovie = _this.attr('data-movie');
+            $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'movie:like_num' %}",
+                    data: {
+                        movie_id: datamovie,
+                        user_id: datauser,
+                        comment_id: dataid,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function(data) {
+                        Dml.fun.winReload();
+                    }
+                });
+        });
+</script>
+<script type="text/javascript">
+    $('.jsDelLike_num').on('click', function(){
+            var _this = $(this),
+                datauser = _this.attr('data-user'),
+                dataid = _this.attr('data-id'),
+                datamovie = _this.attr('data-movie');
+            $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'movie:dislike_num' %}",
+                    data: {
+                        movie_id: datamovie,
+                        user_id: datauser,
+                        comment_id: dataid,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function(data) {
+                        Dml.fun.winReload();
+                    }
+                });
+        });
+</script>
+{%  endblock %}
